@@ -1,4 +1,4 @@
-<div class="slideshow swiper-viewport">
+{# <div class="slideshow swiper-viewport">
   <div id="slideshow{{ module }}" class="swiper-container">
     <div class="swiper-wrapper"> {% for banner in banners %}
       <div class="swiper-slide text-center">{% if banner.link %}<a href="{{ banner.link }}"><img src="{{ banner.image }}" alt="{{ banner.title }}" class="img-responsive" /></a>{% else %}<img src="{{ banner.image }}" alt="{{ banner.title }}" class="img-responsive" />{% endif %}</div>
@@ -23,4 +23,10 @@ $('#slideshow{{ module }}').swiper({
     autoplayDisableOnInteraction: true,
 	loop: true
 });
-//--></script>
+//--></script> #}
+
+{{dump(banners)}}
+
+ {# {% for banner in banners %}
+  {{ loop.index}}
+ {% endfor %} #}
