@@ -61,41 +61,41 @@
                     </tr>
                   </thead>
                   <tbody>
-                      {% for custome in custome_slide %}
-                            {% if custome.language_id == language.language_id %}
-                              {# {{custome.language_id}} #}
-                              <tr id="image-row{{ image_row }}">
-                                <td class="text-center">
+                    {% for key, language_img in language_image  %}
+                      {% if key == language.language_id %}
+                        {% for nexkey, language_im in language_img  %}
+                          <tr id="image-row{{ image_row }}">
+                              <td class="text-center">
                                   <a href="" id="thumb-image{{ image_row }}" data-toggle="image" class="img-thumbnail">
-                                    <img src="{{ custome.image_pc }}" alt="" title="" data-placeholder="{{ placeholder }}" />
+                                    <img src="{{language_im.thumb_pc}}" alt="" title="" data-placeholder="{{ placeholder }}" />
                                   </a>
-                                  <input type="hidden" name="banner_image[{{ language.language_id }}][{{ image_row }}][image]" value="{{ banner_image.image }}" id="input-image{{ image_row }}" />
+                                  <input type="hidden" name="language_image[{{ language.language_id }}][{{ image_row }}][image_pc]" value="{{ language_im.image_pc }}" id="input-image{{ image_row }}" />
+                                </td>
+                                <td class="text-center">
+                                  <a href="" id="thumb-image{{ image_row + 11 }}" data-toggle="image" class="img-thumbnail">
+                                    <img src="{{ language_im.thumb_mobile}}" alt="" title="" data-placeholder="{{ placeholder }}" />
+                                  </a>
+                                  <input type="hidden" name="language_image[{{ language.language_id }}][{{ image_row }}][image_mobile]" value="{{ language_im.image_mobile }}" id="input-image{{ image_row }}" />
                                 </td>
                                 <td class="text-left">
-                                  <input type="text" name="banner_image[{{ language.language_id }}][{{ image_row }}][title]" value="{{ banner_image.title }}" placeholder="{{ entry_image_compute }}" class="form-control" />
-                                  {% if error_banner_image[language.language_id][image_row] %}
-                                  <div class="text-danger">{{ error_banner_image[language.language_id][image_row] }}</div>
+                                  <input type="text" name="language_image[{{ language.language_id }}][{{ image_row }}][title]" value="{{ language_im.title }}" placeholder="{{ entry_image_compute }}" class="form-control" />
+                                  {% if error_language_image[language.language_id][image_row] %}
+                                  <div class="text-danger">{{ error_language_image[language.language_id][image_row] }}</div>
                                   {% endif %}
+                                 </td>
+                                <td class="text-left">
+                                  <input type="text" name="language_image[{{ language.language_id }}][{{ image_row }}][link]" value="{{ language_im.link }}" placeholder="{{ entry_image_compute }}" class="form-control" />
+                                 
                                 </td>
-                              </tr>    
-                            {% endif %}
-                      {% endfor %}
-                    {# {% if banner_images[language.language_id] %}
-                    {% for banner_image in banner_images[language.language_id] %}
-                    <tr id="image-row{{ image_row }}">
-                      <td class="text-left"><input type="text" name="banner_image[{{ language.language_id }}][{{ image_row }}][title]" value="{{ banner_image.title }}" placeholder="{{ entry_title }}" class="form-control" />
-                        {% if error_banner_image[language.language_id][image_row] %}
-                        <div class="text-danger">{{ error_banner_image[language.language_id][image_row] }}</div>
-                        {% endif %}</td>
-                      <td class="text-left" style="width: 30%;"><input type="text" name="banner_image[{{ language.language_id }}][{{ image_row }}][link]" value="{{ banner_image.link }}" placeholder="{{ entry_link }}" class="form-control" /></td>
-                      <td class="text-center"><a href="" id="thumb-image{{ image_row }}" data-toggle="image" class="img-thumbnail"><img src="{{ banner_image.thumb }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a>
-                        <input type="hidden" name="banner_image[{{ language.language_id }}][{{ image_row }}][image]" value="{{ banner_image.image }}" id="input-image{{ image_row }}" /></td>
-                      <td class="text-right" style="width: 10%;"><input type="text" name="banner_image[{{ language.language_id }}][{{ image_row }}][sort_order]" value="{{ banner_image.sort_order }}" placeholder="{{ entry_sort_order }}" class="form-control" /></td>
-                      <td class="text-left"><button type="button" onclick="$('#image-row{{ image_row }}, .tooltip').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
-                    </tr>
-                    {% set image_row = image_row + 1 %}
+                              <td class="text-left">
+                                  <input type="text" name="language_image[{{ language.language_id }}][{{ image_row }}][alt]" value="{{ language_im.alt}}" placeholder="{{ entry_image_compute }}" class="form-control" />
+                              </td>
+                              <td class="text-left"><button type="button" onclick="$('#image-row{{ image_row }}, .tooltip').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
+                          </tr> 
+                          {% set image_row = image_row + 1 %}
+                        {% endfor %}
+                      {% endif %}
                     {% endfor %}
-                    {% endif %} #}
                   </tbody>
                   <tfoot>
                     <tr>
@@ -115,11 +115,12 @@ var image_row = {{ image_row }};
 
 function addImage(language_id) {
 	html  = '<tr id="image-row' + image_row + '">';
-    html += '  <td class="text-left"><input type="text" name="banner_image[' + language_id + '][' + image_row + '][title]" value="" placeholder="{{ entry_title }}" class="form-control" /></td>';	
-	html += '  <td class="text-left" style="width: 30%;"><input type="text" name="banner_image[' + language_id + '][' + image_row + '][link]" value="" placeholder="{{ entry_link }}" class="form-control" /></td>';	
-	html += '  <td class="text-center"><a href="" id="thumb-image' + image_row + '" data-toggle="image" class="img-thumbnail"><img src="{{ placeholder }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a><input type="hidden" name="banner_image[' + language_id + '][' + image_row + '][image]" value="" id="input-image' + image_row + '" /></td>';
-	html += '  <td class="text-right" style="width: 10%;"><input type="text" name="banner_image[' + language_id + '][' + image_row + '][sort_order]" value="" placeholder="{{ entry_sort_order }}" class="form-control" /></td>';
-	html += '  <td class="text-left"><button type="button" onclick="$(\'#image-row' + image_row  + ', .tooltip\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+  html += ' <td class="text-center"><a href="" id="thumb-image'+ image_row +'" data-toggle="image" class="img-thumbnail"><img src="{{ placeholder }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a><input type="hidden" name="language_image['+ language_id +']['+ image_row +'][image_pc]" value="" id="input-image'+ image_row +'" /></td>';	
+	html += ' <td class="text-center"><a href="" id="thumb-image'+ image_row + 11 +'" data-toggle="image" class="img-thumbnail"><img src="{{ placeholder }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a><input type="hidden" name="language_image['+ language_id +']['+ image_row +'][image_mobile]" value="" id="input-image'+ image_row  +'" /></td>';	
+  html += ' <td class="text-left"><input type="text" name="language_image['+ language_id +']['+ image_row +'][title]" value="" placeholder="{{ entry_image_compute }}" class="form-control" /></td>';
+  html += ' <td class="text-left"><input type="text" name="language_image['+ language_id +']['+ image_row +'][link]" value="" placeholder="{{ entry_image_compute }}" class="form-control" /></td>';
+  html += ' <td class="text-left"><input type="text" name="language_image['+ language_id +']['+ image_row +'][alt]" value="" placeholder="{{ entry_image_compute }}" class="form-control" /></td>';
+	html += ' <td class="text-left"><button type="button" onclick="$(\'#image-row' + image_row  + ', .tooltip\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
 	html += '</tr>';
 	
 	$('#images' + language_id + ' tbody').append(html);
