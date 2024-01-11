@@ -81,9 +81,9 @@ class ControllerExtensionModuleViewProduct extends Controller {
                         }
                     }
                 }
-            }  
+            } 
         }
+      
         return $this->load->view('extension/module/view_product/view_product', $data);
     }
-
 }
