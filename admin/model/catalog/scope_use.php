@@ -38,8 +38,26 @@ class ModelCatalogScopeUse extends Model {
 			$sql .= " WHERE name LIKE '" . $this->db->escape($data['filter_name']) . "%'";
 		}
 
+        if (isset($data['start']) || isset($data['limit'])) {
+			if ($data['start'] < 0) {
+				$data['start'] = 0;
+			}
+
+			if ($data['limit'] < 1) {
+				$data['limit'] = 20;
+			}
+
+			$sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
+		}
+
 		$query = $this->db->query($sql);
 
 		return $query->rows;
+	}
+
+    public function getTotalScopeUse() {
+		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "spheres");
+
+		return $query->row['total'];
 	}
 }

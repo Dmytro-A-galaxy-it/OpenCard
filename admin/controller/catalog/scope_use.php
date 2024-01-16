@@ -16,6 +16,12 @@ class ControllerCatalogScopeUse extends Controller{
 
     public function getList() {
 
+        if (isset($this->request->get['page'])) {
+			$page = (int)$this->request->get['page'];
+		} else {
+			$page = 1;
+		}
+
         $url = '';
 
         $data['breadcrumbs'] = array();
@@ -35,7 +41,14 @@ class ControllerCatalogScopeUse extends Controller{
 
         $data['scope_uses'] = array();
 
-        $results = $this->model_catalog_scope_use->getScopeUses();
+        $filter_data = array(
+			'start' => ($page - 1) * $this->config->get('config_limit_admin'),
+			'limit' => $this->config->get('config_limit_admin')
+		);
+
+        $scope_use_total = $this->model_catalog_scope_use->getTotalScopeUse();
+
+        $results = $this->model_catalog_scope_use->getScopeUses($filter_data);
 
 		foreach ($results as $result) {
 			$data['scope_uses'][] = array(
@@ -44,6 +57,17 @@ class ControllerCatalogScopeUse extends Controller{
                 'edit'            => $this->url->link('catalog/scope_use/edit', 'user_token=' . $this->session->data['user_token'] . '&scope_use_id=' . $result['sphere_id'] . $url, true)
             );
 		}
+
+        $pagination = new Pagination();
+		$pagination->total = $scope_use_total;
+		$pagination->page = $page;
+		$pagination->limit = $this->config->get('config_limit_admin');
+		$pagination->url = $this->url->link('catalog/scope_use', 'user_token=' . $this->session->data['user_token'] . $url . '&page={page}', true);
+
+		$data['pagination'] = $pagination->render();
+
+		$data['results'] = sprintf($this->language->get('text_pagination'), ($scope_use_total) ? (($page - 1) * $this->config->get('config_limit_admin')) + 1 : 0, ((($page - 1) * $this->config->get('config_limit_admin')) > ($scope_use_total - $this->config->get('config_limit_admin'))) ? $scope_use_total : ((($page - 1) * $this->config->get('config_limit_admin')) + $this->config->get('config_limit_admin')), $scope_use_total, ceil($scope_use_total / $this->config->get('config_limit_admin')));
+
 
         $data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
