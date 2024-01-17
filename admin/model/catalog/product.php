@@ -93,6 +93,12 @@ class ModelCatalogProduct extends Model {
 			}
 		}
 
+		if (isset($data['product_spheres'])) {
+			foreach ($data['product_spheres'] as $spheres_id) {
+				$this->db->query("INSERT INTO " . DB_PREFIX . "spheres_to_product SET spheres_id = '" . (int)$product_id . "', product_id = '" . (int)$spheres_id . "'");
+			}
+		}
+
 		if (isset($data['product_filter'])) {
 			foreach ($data['product_filter'] as $filter_id) {
 				$this->db->query("INSERT INTO " . DB_PREFIX . "product_filter SET product_id = '" . (int)$product_id . "', filter_id = '" . (int)$filter_id . "'");
@@ -248,6 +254,14 @@ class ModelCatalogProduct extends Model {
 			}
 		}
 
+		$this->db->query("DELETE FROM " . DB_PREFIX . "spheres_to_product WHERE product_id = '" . (int)$product_id . "'");
+
+		if (isset($data['product_spheres'])) {
+			foreach ($data['product_spheres'] as $spheres_id) {
+				$this->db->query("INSERT INTO " . DB_PREFIX . "spheres_to_product SET product_id = '" . (int)$product_id . "', spheres_id = '" . (int)$spheres_id . "'");
+			}
+		}
+
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_filter WHERE product_id = '" . (int)$product_id . "'");
 
 		if (isset($data['product_filter'])) {
@@ -324,6 +338,7 @@ class ModelCatalogProduct extends Model {
 			$data['product_reward'] = $this->getProductRewards($product_id);
 			$data['product_special'] = $this->getProductSpecials($product_id);
 			$data['product_category'] = $this->getProductCategories($product_id);
+			$data['product_spheres'] = $this->getProductSpheres($product_id);
 			$data['product_download'] = $this->getProductDownloads($product_id);
 			$data['product_layout'] = $this->getProductLayouts($product_id);
 			$data['product_store'] = $this->getProductStores($product_id);
@@ -347,6 +362,7 @@ class ModelCatalogProduct extends Model {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_reward WHERE product_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_special WHERE product_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_category WHERE product_id = '" . (int)$product_id . "'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "spheres_to_product WHERE product_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_download WHERE product_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_layout WHERE product_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_store WHERE product_id = '" . (int)$product_id . "'");
@@ -433,6 +449,12 @@ class ModelCatalogProduct extends Model {
 		return $query->rows;
 	}
 
+	public function getProductsSpheresById($spheres_id) {
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "spheres_to_product p2c ON (p.product_id = p2c.product_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p2c.spheres_id = '" . (int)$spheres_id . "' ORDER BY pd.name ASC");
+
+		return $query->rows;
+	}
+
 	public function getProductDescriptions($product_id) {
 		$product_description_data = array();
 
@@ -462,6 +484,18 @@ class ModelCatalogProduct extends Model {
 		}
 
 		return $product_category_data;
+	}
+
+	public function getProductSpheres($product_id) {
+		$product_spheres_data = array();
+
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "spheres_to_product WHERE product_id = '" . (int)$product_id . "'");
+
+		foreach ($query->rows as $result) {
+			$product_spheres_data[] = $result['spheres_id'];
+		}
+
+		return $product_spheres_data;
 	}
 
 	public function getProductFilters($product_id) {

@@ -886,6 +886,34 @@ class ControllerCatalogProduct extends Controller {
 				);
 			}
 		}
+		
+
+		//spheres
+
+		$this->load->model('catalog/scope_use');
+
+		if (isset($this->request->post['product_spheres'])) {
+			$spheres = $this->request->post['product_spheres'];
+		} elseif (isset($this->request->get['product_id'])) {
+			echo 1;
+			$spheres = $this->model_catalog_product->getProductSpheres($this->request->get['product_id']);
+		} else {
+			$spheres = array();
+		}
+
+		$data['product_spheress'] = array();
+
+		foreach ($spheres as $spheres_id) {
+			$spheres_info = $this->model_catalog_scope_use->getScopeUse($spheres_id);
+
+			if ($spheres_info) {
+				$data['product_spheress'][] = array(
+					'spheres_id' => $spheres_info['sphere_id'],
+					'name'        => $spheres_info['name']
+				);
+			}
+		}
+
 
 		// Filters
 		$this->load->model('catalog/filter');

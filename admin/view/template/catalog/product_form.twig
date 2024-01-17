@@ -391,6 +391,17 @@
                 </div>
               </div>
               <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-spheres"><span data-toggle="tooltip" title="{{ help_category }}">{{ entry_category }}</span></label>
+                <div class="col-sm-10">
+                  <input type="text" name="scope_use" value="" placeholder="{{ entry_category }}" id="input-spheres" class="form-control"/>
+                  <div id="product-spheres" class="well well-sm" style="height: 150px; overflow: auto;"> {% for product_sphere in product_spheress %}
+                      <div id="product-spheres{{ product_sphere.spheres_id }}"><i class="fa fa-minus-circle"></i> {{ product_sphere.name }}
+                        <input type="hidden" name="product_spheres[]" value="{{ product_sphere.spheres_id }}"/>
+                      </div>
+                    {% endfor %}</div>
+                </div>
+              </div>
+              <div class="form-group">
                 <label class="col-sm-2 control-label" for="input-filter"><span data-toggle="tooltip" title="{{ help_filter }}">{{ entry_filter }}</span></label>
                 <div class="col-sm-10">
                   <input type="text" name="filter" value="" placeholder="{{ entry_filter }}" id="input-filter" class="form-control"/>
@@ -1183,6 +1194,35 @@
   });
 
   $('#product-category').delegate('.fa-minus-circle', 'click', function() {
+	  $(this).parent().remove();
+  });
+
+  // Sphere
+  $('input[name=\'scope_use\']').autocomplete({
+	  'source': function(request, response) {
+		  $.ajax({
+			  url: 'index.php?route=catalog/scope_use/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+			  dataType: 'json',
+			  success: function(json) {
+				  response($.map(json, function(item) {
+					  return {
+						  label: item['name'],
+						  value: item['sphere_id']
+					  }
+				  }));
+			  }
+		  });
+	  },
+	  'select': function(item) {
+		  $('input[name=\'scope_use\']').val('');
+
+		  $('#product-spheres' + item['value']).remove();
+
+		  $('#product-spheres').append('<div id="product-spheres' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="product_spheres[]" value="' + item['value'] + '" /></div>');
+	  }
+  });
+
+  $('#product-spheres').delegate('.fa-minus-circle', 'click', function() {
 	  $(this).parent().remove();
   });
 

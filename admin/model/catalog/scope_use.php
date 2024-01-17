@@ -27,6 +27,8 @@ class ModelCatalogScopeUse extends Model {
     public function deleteScopeUse($scope_use_id) {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "spheres WHERE sphere_id = '" . (int)$scope_use_id . "'");
 
+		$this->db->query("DELETE FROM " . DB_PREFIX . "spheres_to_product WHERE spheres_id = '" . (int)$scope_use_id . "'");
+
 		$this->cache->delete('spheres');
 	}
 
